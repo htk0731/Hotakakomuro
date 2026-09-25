@@ -16,39 +16,39 @@
             overflow-x: hidden;
         }
 
-/* ブラウン管（CRT）トランジション用のオーバーレイ */
-#crt-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: #000;
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0;
-}
-#crt-overlay::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    opacity: 0;
-}
-/* ----- 電源OFF (ページ遷移時) ----- */
-body.crt-off #crt-overlay {
-    opacity: 1;
-    pointer-events: auto;
-}
-body.crt-off #crt-overlay::after {
-    opacity: 1;
-    animation: crtLineOff 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
-@keyframes crtLineOff {
-    0% { width: 100vw; height: 100vh; opacity: 0.8; }
-    40% { width: 100vw; height: 2px; opacity: 1; }
-    80% { width: 0vw; height: 2px; opacity: 1; }
-    100% { width: 0vw; height: 0; opacity: 0; }
-}
+        /* ブラウン管（CRT）トランジション用のオーバーレイ */
+        #crt-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: #000;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+        }
+        #crt-overlay::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            opacity: 0;
+        }
+        /* ----- 電源OFF (ページ遷移時) ----- */
+        body.crt-off #crt-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        body.crt-off #crt-overlay::after {
+            opacity: 1;
+            animation: crtLineOff 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        @keyframes crtLineOff {
+            0% { width: 100vw; height: 100vh; opacity: 0.8; }
+            40% { width: 100vw; height: 2px; opacity: 1; }
+            80% { width: 0vw; height: 2px; opacity: 1; }
+            100% { width: 0vw; height: 0; opacity: 0; }
+        }
 
         /* Apple-like minimalist scrollbar */
         ::-webkit-scrollbar {
@@ -122,7 +122,6 @@ body.crt-off #crt-overlay::after {
             display: block;
         }
 
-        /* デフォルト（スマホ等）はカラー表示 */
         .work-card img {
             width: 100%;
             height: 100%;
@@ -131,7 +130,6 @@ body.crt-off #crt-overlay::after {
             filter: grayscale(0%);
         }
 
-        /* デフォルト（スマホ等）は最初からタイトルとグラデーションを表示 */
         .work-overlay {
             position: absolute;
             inset: 0;
@@ -158,7 +156,6 @@ body.crt-off #crt-overlay::after {
             transform: scale(1.1);
         }
 
-        /* デフォルト（スマホ等）は最初から定位置にタイトルを配置 */
         .work-title {
             transform: translateY(0);
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
@@ -167,26 +164,52 @@ body.crt-off #crt-overlay::after {
             letter-spacing: -0.05em;
         }
 
-        /* PC等（ホバー可能な端末）のみ最初はモノクロ・タイトル非表示にし、ホバー時に表示させる */
         @media (hover: hover) and (pointer: fine) {
-            .work-card img {
-                filter: grayscale(100%);
-            }
-            .work-card:hover img {
-                filter: grayscale(0%);
-            }
-            .work-overlay {
-                opacity: 0;
-            }
-            .work-card:hover .work-overlay {
-                opacity: 1;
-            }
-            .work-title {
-                transform: translateY(20px);
-            }
-            .work-card:hover .work-title {
-                transform: translateY(0);
-            }
+            .work-card img { filter: grayscale(100%); }
+            .work-card:hover img { filter: grayscale(0%); }
+            .work-overlay { opacity: 0; }
+            .work-card:hover .work-overlay { opacity: 1; }
+            .work-title { transform: translateY(20px); }
+            .work-card:hover .work-title { transform: translateY(0); }
+        }
+
+        /* ===== 3Dスライド メニュー用CSS ===== */
+        #mobile-menu-wrapper {
+            position: fixed;
+            inset: 0;
+            z-index: 40; /* navbar(z-50)の裏側 */
+            pointer-events: none;
+            /* 奥行きを表現するためのperspective */
+            perspective: 1200px;
+        }
+
+        #mobile-menu {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            padding-top: 100px;
+            padding-left: 2rem;
+            
+            /* 初期状態：画面外（右）、45度回転、奥(-300px)へ後退 */
+            transform: translateX(100%) rotateY(-45deg) translateZ(-300px);
+            opacity: 0;
+            visibility: hidden;
+            transform-origin: right center;
+            
+            /* スムーズなイージング */
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), 
+                        opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+                        visibility 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* activeクラス付与時：正面に戻りながら表示 */
+        #mobile-menu.is-active {
+            transform: translateX(0) rotateY(0deg) translateZ(0);
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto; /* メニュー表示時はタップ可能に */
         }
     </style>
 </head>
@@ -203,17 +226,20 @@ body.crt-off #crt-overlay::after {
                 <a href="#works" class="hover:text-white transition-colors">WORKS</a>
                 <a href="#contact" class="hover:text-white transition-colors">CONTACT</a>
             </div>
-            <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none">
+            <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none z-50 relative">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
-        <!-- Mobile Menu Panel -->
-        <div id="mobile-menu" class="hidden md:hidden bg-black/95 backdrop-blur-xl border-t border-white/10 absolute top-full left-0 w-full py-4 px-6 flex flex-col space-y-6 text-sm font-medium tracking-widest text-gray-400">
+    </nav>
+
+    <!-- Mobile Menu 3D Wrapper (ナビゲーションの外に配置) -->
+    <div id="mobile-menu-wrapper" class="md:hidden">
+        <div id="mobile-menu" class="bg-black/95 backdrop-blur-xl border-l border-white/10 flex flex-col space-y-8 text-lg font-medium tracking-widest text-gray-400">
             <a href="#profile" class="mobile-link hover:text-white transition-colors">PROFILE</a>
             <a href="#works" class="mobile-link hover:text-white transition-colors">WORKS</a>
             <a href="#contact" class="mobile-link hover:text-white transition-colors">CONTACT</a>
         </div>
-    </nav>
+    </div>
 
     <!-- Hero Section -->
     <header class="h-screen flex flex-col justify-center items-center text-center px-4 relative overflow-hidden">
@@ -224,7 +250,6 @@ body.crt-off #crt-overlay::after {
         <a href="#profile" class="hero-text btn inline-block px-8 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform duration-300">
             View more
         </a>
-        
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[120px] -z-10"></div>
     </header>
 
@@ -252,6 +277,7 @@ body.crt-off #crt-overlay::after {
                     <div class="md:col-span-3 text-xl text-gray-100">
                       <div>Aviutl （5年）</div>
                       <div>Adobe Premiere Pro （3年）</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -273,7 +299,6 @@ body.crt-off #crt-overlay::after {
                     <p class="text-gray-300 mt-2 text-sm">Video Director</p>
                 </div>
             </a>
-
             <!-- Item 2 (Small) -->
             <a href="books.html" class="work-card grid-item-2 reveal">
                 <img src="book.webp" alt="Project 2" loading="lazy">
@@ -282,7 +307,6 @@ body.crt-off #crt-overlay::after {
                     <p class="text-gray-300 mt-2 text-sm">Self-Published Author</p>
                 </div>
             </a>
-
             <!-- Item 3 (Tall) -->
             <a href="https://www.instagram.com/komuro_hotaka?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" class="work-card grid-item-3 reveal">
                 <img src="kabuki.webp" alt="Project 3" loading="lazy">
@@ -291,7 +315,6 @@ body.crt-off #crt-overlay::after {
                     <p class="text-gray-300 mt-2 text-sm">Instagram</p>
                 </div>
             </a>
-
             <!-- Item 4 (Wide) -->
             <a href="video.html" class="work-card grid-item-4 reveal">
                 <img src="sea.webp" alt="Project 4" loading="lazy">
@@ -351,20 +374,21 @@ body.crt-off #crt-overlay::after {
                     navbar.classList.remove('bg-black/80', 'shadow-lg');
                 }
             });
-            
-            // Mobile menu toggle
+
+            // ===== Mobile menu toggle (3Dアニメーション用に変更) =====
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileLinks = document.querySelectorAll('.mobile-link');
 
             if(mobileBtn && mobileMenu) {
                 mobileBtn.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
+                    // hiddenの切り替えではなく、is-activeクラスをトグル
+                    mobileMenu.classList.toggle('is-active');
                 });
                 // リンクをクリックしたらメニューを閉じる
                 mobileLinks.forEach(link => {
                     link.addEventListener('click', () => {
-                        mobileMenu.classList.add('hidden');
+                        mobileMenu.classList.remove('is-active');
                     });
                 });
             }
@@ -381,7 +405,7 @@ body.crt-off #crt-overlay::after {
                     setTimeout(() => { window.location.href = href; }, 1500);
                 });
             });
-        }); // ← DOMContentLoaded の閉じカッコ
+        });
 
         // ページの「戻る/進む」ボタンで戻った際に対応
         window.addEventListener('pageshow', (event) => {
