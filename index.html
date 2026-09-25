@@ -97,6 +97,7 @@
             filter: grayscale(0%);
         }
 
+        /* デフォルト（スマホ等）は最初からタイトルとグラデーションを表示 */
         .work-overlay {
             position: absolute;
             inset: 0;
@@ -105,7 +106,7 @@
             justify-content: flex-end;
             padding: 2rem;
             background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            opacity: 0;
+            opacity: 1; 
             transition: opacity 0.5s ease;
         }
 
@@ -123,29 +124,34 @@
             transform: scale(1.1);
         }
 
-        .work-card:hover .work-overlay {
-            opacity: 1;
-        }
-
+        /* デフォルト（スマホ等）は最初から定位置にタイトルを配置 */
         .work-title {
-            transform: translateY(20px);
+            transform: translateY(0);
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             font-weight: 800;
             font-size: 1.5rem;
             letter-spacing: -0.05em;
         }
-        
-        .work-card:hover .work-title {
-            transform: translateY(0);
-        }
 
-        /* PC等（ホバー可能な端末）のみ最初はモノクロでホバー時にカラー */
+        /* PC等（ホバー可能な端末）のみ最初はモノクロ・タイトル非表示にし、ホバー時に表示させる */
         @media (hover: hover) and (pointer: fine) {
             .work-card img {
                 filter: grayscale(100%);
             }
             .work-card:hover img {
                 filter: grayscale(0%);
+            }
+            .work-overlay {
+                opacity: 0;
+            }
+            .work-card:hover .work-overlay {
+                opacity: 1;
+            }
+            .work-title {
+                transform: translateY(20px);
+            }
+            .work-card:hover .work-title {
+                transform: translateY(0);
             }
         }
     </style>
