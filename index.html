@@ -40,13 +40,11 @@
         }
 
         /* Hero text fade in */
-        /* アニメーションの時間を長く(2.5s)し、移動距離を大きく(60px)変更しました */
         .hero-text {
             animation: fadeUp 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(60px); 
         }
-        /* 遅延のタイミングを少しずらしてじわじわ感を出しています */
         .hero-text.line-1 { animation-delay: 0.5s; display: inline-block; }
         .hero-text.line-2 { animation-delay: 1.0s; display: inline-block; }
         .hero-text.btn { animation-delay: 2.6s; display: inline-block; }
@@ -87,15 +85,16 @@
             transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            display: block; /* aタグをブロック要素にするため追加 */
+            display: block;
         }
 
+        /* デフォルト（スマホ等）はカラー表示 */
         .work-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
-            filter: grayscale(100%); /* Start minimal */
+            filter: grayscale(0%);
         }
 
         .work-overlay {
@@ -110,13 +109,11 @@
             transition: opacity 0.5s ease;
         }
 
-        /* The dynamic pop effect on hover */
         .work-card:hover {
             transform: scale(0.98) translateY(-5px);
             border-color: transparent;
         }
         
-        /* Vibrant borders/shadows depending on nth-child to simulate Asobi vibe */
         .work-card:nth-child(1):hover { box-shadow: 0 20px 50px rgba(255, 0, 128, 0.4); }
         .work-card:nth-child(2):hover { box-shadow: 0 20px 50px rgba(0, 255, 255, 0.4); }
         .work-card:nth-child(3):hover { box-shadow: 0 20px 50px rgba(255, 255, 0, 0.4); }
@@ -124,7 +121,6 @@
 
         .work-card:hover img {
             transform: scale(1.1);
-            filter: grayscale(0%); /* Pop to color */
         }
 
         .work-card:hover .work-overlay {
@@ -143,6 +139,15 @@
             transform: translateY(0);
         }
 
+        /* PC等（ホバー可能な端末）のみ最初はモノクロでホバー時にカラー */
+        @media (hover: hover) and (pointer: fine) {
+            .work-card img {
+                filter: grayscale(100%);
+            }
+            .work-card:hover img {
+                filter: grayscale(0%);
+            }
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-white selection:text-black">
@@ -162,9 +167,8 @@
         </div>
     </nav>
 
-    <!-- Hero Section (Apple Aesthetic) -->
+    <!-- Hero Section -->
     <header class="h-screen flex flex-col justify-center items-center text-center px-4 relative overflow-hidden">
-        <!-- アニメーションのクラスを分割して個別に適用 -->
         <h1 class="text-5xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-24">
             <span class="hero-text line-1">Hotaka</span> <br class="md:hidden"/> 
             <span class="hero-text line-2">Komuro</span>
@@ -173,7 +177,6 @@
             View more
         </a>
         
-        <!-- Subtle background gradient blob for depth -->
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[120px] -z-10"></div>
     </header>
 
@@ -195,7 +198,7 @@
                         さらに映像表現を深く追求するため、2026年より名古屋学芸大学へ進学し、本格的な映像制作を専攻。また、これに先駆けて2025年からは小説をはじめとする文学分野での創作活動も開始した。映像制作で培ったカメラワークやカット割りといった特有の視点を文章に活かし、読者の脳裏に鮮明な情景が浮かぶような物語づくりに挑戦している。映像と文学という2つのアプローチを掛け合わせることで、枠にとらわれない独自の表現を探求し続けている。
                     </div>
                 </div>
-                <!-- Tools (新規追加) -->
+                <!-- Tools -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 border-b border-white/10 pb-6">
                     <div class="text-gray-500 font-medium tracking-widest text-sm uppercase flex items-center">Tools</div>
                     <div class="md:col-span-3 text-xl text-gray-100">Adobe Premiere Pro （3年）</div>
@@ -204,7 +207,7 @@
         </div>
     </section>
 
-    <!-- Works Section (Asobisystem Aesthetic) -->
+    <!-- Works Section -->
     <section id="works" class="py-32 px-4 md:px-12 max-w-[1600px] mx-auto">
         <div class="mb-16 reveal">
             <h2 class="text-4xl md:text-6xl font-bold tracking-tighter mb-4">Selected Works</h2>
@@ -214,7 +217,7 @@
         <div class="works-grid">
             <!-- Item 1 (Large) -->
             <a href="showreel.html" class="work-card grid-item-1 reveal">
-                <img src="nagano.webp" alt="Project 1">
+                <img src="nagano.webp" alt="Project 1" loading="lazy">
                 <div class="work-overlay">
                     <h3 class="work-title text-pink-400">Showreel</h3>
                     <p class="text-gray-300 mt-2 text-sm">Video Director</p>
@@ -223,7 +226,7 @@
 
             <!-- Item 2 (Small) -->
             <a href="books.html" class="work-card grid-item-2 reveal">
-                <img src="book.webp" alt="Project 2">
+                <img src="book.webp" alt="Project 2" loading="lazy">
                 <div class="work-overlay">
                     <h3 class="work-title text-cyan-400">Books</h3>
                     <p class="text-gray-300 mt-2 text-sm">Self-Published Author</p>
@@ -232,7 +235,7 @@
 
             <!-- Item 3 (Tall) -->
             <a href="https://www.instagram.com/komuro_hotaka?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" class="work-card grid-item-3 reveal">
-                <img src="kabuki.webp" alt="Project 3">
+                <img src="kabuki.webp" alt="Project 3" loading="lazy">
                 <div class="work-overlay">
                     <h3 class="work-title text-yellow-400">Photography</h3>
                     <p class="text-gray-300 mt-2 text-sm">Instagram</p>
@@ -241,7 +244,7 @@
 
             <!-- Item 4 (Wide) -->
             <a href="video.html" class="work-card grid-item-4 reveal">
-                <img src="sea.webp" alt="Project 4">
+                <img src="sea.webp" alt="Project 4" loading="lazy">
                 <div class="work-overlay">
                     <h3 class="work-title text-purple-400">Video</h3>
                     <p class="text-gray-300 mt-2 text-sm">Director/Video Editor</p>
@@ -267,7 +270,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Scroll Reveal Animation using Intersection Observer
             const revealElements = document.querySelectorAll('.reveal');
             
             const revealOptions = {
@@ -289,7 +291,6 @@
                 revealObserver.observe(el);
             });
 
-            // Navbar background opacity on scroll
             const navbar = document.getElementById('navbar');
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
