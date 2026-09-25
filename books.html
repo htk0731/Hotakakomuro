@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books - Portfolio</title>
+    <!-- Tailwind CSS for layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Apple-like minimalist scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        /* Reveal animations for scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero text fade in */
+        .hero-text {
+            animation: fadeUp 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(60px); 
+        }
+        .hero-text.line-1 { animation-delay: 0.1s; display: inline-block; }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 矢印（↓）用の1.5秒遅延＋上下ゆらゆらアニメーション */
+        .scroll-arrow {
+            opacity: 0;
+            /* フェードインと上下動を同じタイミング（1.5秒後）から同時に開始させてズレを解消 */
+            animation: fadeInArrow 1.5s ease forwards 1.5s, bounce 2s infinite 1.5s;
+        }
+
+        @keyframes fadeInArrow {
+            to { opacity: 0.6; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-white selection:text-black">
+
+    <!-- Navbar with Back Button -->
+    <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- ポートフォリオのトップページのファイル名に合わせて href を変更してください -->
+            <a href="portfolio2.html" class="text-sm font-bold tracking-widest text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                BACK TO PORTFOLIO
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="h-screen flex flex-col justify-center items-center text-center px-4 relative overflow-hidden">
+        <h1 class="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter hero-text line-1">
+            Books
+        </h1>
+
+        <!-- 1.5秒後に下部に現れる矢印アイコン（↓） -->
+        <a href="#content" class="scroll-arrow absolute bottom-12 left-1/2 -translate-x-1/2 text-white hover:opacity-100 transition-opacity">
+            <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </a>
+        
+        <!-- Subtle background gradient blob for depth -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[120px] -z-10"></div>
+    </header>
+
+    <!-- Content Section -->
+    <section id="content" class="py-24 px-4 md:px-12 max-w-5xl mx-auto">
+        
+        <!-- 説明スペース (2〜3文) -->
+        <div class="reveal mb-20 max-w-3xl mx-auto text-center">
+            <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-light">
+                作家名として「野口澪」名義で活動。映像制作の分野を中心に活動してきた視点を活かし、情景が鮮やかに思い浮かぶ描写を追求している。初めて執筆した小説『名古屋駅の底』が、Web小説サイト「カクヨム」主催の「カクヨム甲子園2025」にて最終選考作品に選出され注目を集める。<br>
+            </p>
+        </div>
+
+        <!-- 縦長ボックス2つ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 justify-items-center">
+            
+            <!-- Book 1 -->
+            <div class="reveal group cursor-pointer w-full max-w-[330px]">
+                <div class="aspect-[2/3] w-full overflow-hidden rounded-xl bg-zinc-900 border border-white/10 mb-6 relative">
+                    <img src="sitagaki.webp" alt="Book 1" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 grayscale">
+                    <div class="absolute inset-0 bg-gradient-to-t from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
+                <h3 class="text-2xl font-bold tracking-tight mb-3 transition-colors group-hover:text-pink-400">下書きのままで</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    どんな幼少期を過ごし、なぜ画面の向こう側の世界である動画編集に惹かれたのか。何を夢として追いかけ、そして表現の交差点に立つ今、何を思っているのか。映像と文章、2つの視点を行き来しながら紡がれたのは、自身の原点とこれからを鮮やかに切り取った等身大の言葉たち。何気ない日常のカットから見つけ出した、自分だけの「言葉と情景」を綴る一冊。
+                </p>
+            </div>
+
+            <!-- Book 2 -->
+            <div class="reveal group cursor-pointer w-full max-w-[330px]" style="transition-delay: 100ms;">
+                <div class="aspect-[2/3] w-full overflow-hidden rounded-xl bg-zinc-900 border border-white/10 mb-6 relative">
+                    <img src="onair.webp" alt="Book 2" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 grayscale">
+                    <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
+                <h3 class="text-2xl font-bold tracking-tight mb-3 transition-colors group-hover:text-cyan-400">オンエアの裏側で</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    名古屋のテレビ局で働く新人ADの高橋賢人は、ロケ先の喫茶店で、毎回コーヒーを半分だけ残す老紳士と出会う。しかし、彼は突如姿を消してしまう。理由が気になる高橋は、街で見かけたわずかな手がかりをおって走り始める。新米テレビマンがたどり着いた切なくも温かい真実とは。日常の謎を解き明かすお仕事ミステリー。
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 購入・問い合わせセクション -->
+    <section class="py-32 px-6 bg-zinc-950">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="text-2xl md:text-4xl font-bold tracking-tighter mb-8 leading-tight">
+                購入も可能です。<br class="md:hidden" />ご連絡ください。
+            </h2>
+            <a href="mailto:26mv047@st.nuas.ac.jp" class="inline-block border border-white px-8 py-4 rounded-full hover:bg-white hover:text-black transition-colors duration-300 font-bold">
+                Get in touch
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/10 text-center">
+        <p class="text-gray-600 text-sm tracking-widest">&copy; 2026 Hotaka Komuro. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Scroll Reveal Animation using Intersection Observer
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealObserver = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            // Navbar background opacity on scroll
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('bg-black/80', 'shadow-lg');
+                    navbar.classList.remove('bg-black/60');
+                } else {
+                    navbar.classList.add('bg-black/60');
+                    navbar.classList.remove('bg-black/80', 'shadow-lg');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
