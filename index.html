@@ -16,6 +16,40 @@
             overflow-x: hidden;
         }
 
+/* ブラウン管（CRT）トランジション用のオーバーレイ */
+#crt-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: #000;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+}
+#crt-overlay::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    opacity: 0;
+}
+/* ----- 電源OFF (ページ遷移時) ----- */
+body.crt-off #crt-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+body.crt-off #crt-overlay::after {
+    opacity: 1;
+    animation: crtLineOff 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+@keyframes crtLineOff {
+    0% { width: 100vw; height: 100vh; opacity: 0.8; }
+    40% { width: 100vw; height: 2px; opacity: 1; }
+    80% { width: 0vw; height: 2px; opacity: 1; }
+    100% { width: 0vw; height: 0; opacity: 0; }
+}
+
         /* Apple-like minimalist scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -157,6 +191,9 @@
     </style>
 </head>
 <body class="antialiased selection:bg-white selection:text-black">
+
+    <!-- CRT Transition Element -->
+    <div id="crt-overlay"></div>
 
     <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -307,6 +344,26 @@
                     navbar.classList.remove('bg-black/80', 'shadow-lg');
                 }
             });
+
+            // CRT ページ遷移アニメーションの処理
+            const links = document.querySelectorAll('a[href]');
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const href = link.getAttribute('href');
+                    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('javascript:') || link.target === '_blank') return;
+                    
+                    e.preventDefault();
+                    document.body.classList.add('crt-off');
+                    setTimeout(() => { window.location.href = href; }, 1500);
+                });
+            });
+        }); // ← DOMContentLoaded の閉じカッコ
+
+        // ページの「戻る/進む」ボタンで戻った際に対応
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                document.body.classList.remove('crt-off');
+            }
         });
     </script>
 </body>
