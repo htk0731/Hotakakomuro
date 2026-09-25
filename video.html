@@ -100,11 +100,13 @@
         </h1>
 
         <!-- 1.5秒後に表示される矢印アイコン（↓） -->
-        <a href="#content" class="scroll-arrow absolute bottom-12 left-1/2 -translate-x-1/2 text-white hover:opacity-100 transition-opacity">
-            <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-        </a>
+        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-10">
+            <a href="#content" class="scroll-arrow block text-white hover:opacity-100 transition-opacity">
+                <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </a>
+        </div>
         
         <!-- Subtle background gradient blob for depth -->
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[120px] -z-10"></div>
