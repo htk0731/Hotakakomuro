@@ -15,7 +15,68 @@
             color: #fff;
             overflow-x: hidden;
         }
+/* ブラウン管（CRT）トランジション用のオーバーレイ */
+        #crt-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: #000;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0; /* デフォルトは透明（裏側の操作可能） */
+        }
 
+        /* CRT の光（白い画面→線→点）となる要素 */
+        #crt-overlay::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            opacity: 0;
+        }
+
+        /* ----- 電源ON (ページ読み込み時) ----- */
+        body.crt-init #crt-overlay {
+            opacity: 1; /* 黒幕を表示 */
+            pointer-events: auto;
+            animation: crtOverlayHide 0s forwards 0.6s; /* 0.6秒後に黒幕ごと透明化 */
+        }
+        body.crt-init #crt-overlay::after {
+            opacity: 1;
+            animation: crtLineOn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        /* ----- 電源OFF (ページ遷移時) ----- */
+        body.crt-off #crt-overlay {
+            opacity: 1; /* 黒幕を即座に表示 */
+            pointer-events: auto;
+        }
+        body.crt-off #crt-overlay::after {
+            opacity: 1;
+            animation: crtLineOff 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        /* 黒幕を消すアニメーション */
+        @keyframes crtOverlayHide {
+            to { opacity: 0; pointer-events: none; }
+        }
+
+        /* 光が広がって画面が現れる動き */
+        @keyframes crtLineOn {
+            0% { width: 0vw; height: 2px; }
+            30% { width: 100vw; height: 2px; }
+            60% { width: 100vw; height: 100vh; }
+            100% { width: 100vw; height: 100vh; opacity: 0; }
+        }
+
+        /* 画面が潰れて線になり消える動き */
+        @keyframes crtLineOff {
+            0% { width: 100vw; height: 100vh; opacity: 0.8; }
+            40% { width: 100vw; height: 2px; opacity: 1; }
+            80% { width: 0vw; height: 2px; opacity: 1; }
+            100% { width: 0vw; height: 0; opacity: 0; }
+        }
         /* Apple-like minimalist scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -102,11 +163,13 @@
         </h1>
 
         <!-- 1.5秒後に下部に現れる矢印アイコン（↓） -->
-        <a href="#content" class="scroll-arrow absolute bottom-12 left-1/2 -translate-x-1/2 text-white hover:opacity-100 transition-opacity">
-            <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-        </a>
+        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-10">
+            <a href="#content" class="scroll-arrow block text-white hover:opacity-100 transition-opacity">
+                <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </a>
+        </div>
         
         <!-- Subtle background gradient blob for depth -->
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[120px] -z-10"></div>
