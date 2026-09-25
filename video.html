@@ -69,6 +69,16 @@
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
         }
+
+        /* PC等（ホバー可能な端末）のみ最初はモノクロでホバー時にカラー */
+        @media (hover: hover) and (pointer: fine) {
+            .video-img {
+                filter: grayscale(100%);
+            }
+            .group:hover .video-img {
+                filter: grayscale(0%);
+            }
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-white selection:text-black">
@@ -76,7 +86,6 @@
     <!-- Navbar with Back Button -->
     <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- メインのポートフォリオファイル名を index.html に統一することをおすすめします -->
             <a href="index.html" class="text-sm font-bold tracking-widest text-gray-400 hover:text-white transition-colors flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 BACK TO PORTFOLIO
@@ -106,9 +115,9 @@
         
         <!-- Video Item 1 -->
         <div class="reveal group">
-            <!-- リンク先 (href) を書き換えてください -->
             <a href="https://youtu.be/EOBmsRRIRrY" target="_blank" class="block w-full aspect-video rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 mb-6 relative cursor-pointer">
-                <img src="event.webp" alt="Video 1" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 grayscale">
+                <!-- classから grayscale 関連を削除し、video-img と loading="lazy" を追加 -->
+                <img src="event.webp" alt="Video 1" loading="lazy" class="video-img w-full h-full object-cover transition-all duration-700 group-hover:scale-105">
                 <!-- ホバー時のうっすらした紫のグラデーション -->
                 <div class="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <!-- 再生アイコン（装飾） -->
@@ -124,7 +133,8 @@
         <!-- Video Item 2 -->
         <div class="reveal group">
             <a href="https://youtu.be/2rEltibEDR8" target="_blank" class="block w-full aspect-video rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 mb-6 relative cursor-pointer">
-                <img src="30s.webp" alt="Video 2" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 grayscale">
+                <!-- classから grayscale 関連を削除し、video-img と loading="lazy" を追加 -->
+                <img src="30s.webp" alt="Video 2" loading="lazy" class="video-img w-full h-full object-cover transition-all duration-700 group-hover:scale-105">
                 <!-- ホバー時のうっすらしたシアンのグラデーション -->
                 <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -139,7 +149,8 @@
         <!-- Video Item 3 -->
         <div class="reveal group">
             <a href="https://youtu.be/wVPckafcUcw" target="_blank" class="block w-full aspect-video rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 mb-6 relative cursor-pointer">
-                <img src="sports.webp" alt="Video 3" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 grayscale">
+                <!-- classから grayscale 関連を削除し、video-img と loading="lazy" を追加 -->
+                <img src="sports.webp" alt="Video 3" loading="lazy" class="video-img w-full h-full object-cover transition-all duration-700 group-hover:scale-105">
                 <!-- ホバー時のうっすらした緑のグラデーション -->
                 <div class="absolute inset-0 bg-gradient-to-t from-green-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -172,7 +183,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Scroll Reveal Animation using Intersection Observer
             const revealElements = document.querySelectorAll('.reveal');
             
             const revealOptions = {
@@ -192,7 +202,6 @@
                 revealObserver.observe(el);
             });
 
-            // Navbar background opacity on scroll
             const navbar = document.getElementById('navbar');
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
