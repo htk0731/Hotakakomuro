@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <!-- Tailwind CSS for layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Apple-like minimalist scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        /* Reveal animations for scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero text fade in */
+        /* アニメーションの時間を長く(2.5s)し、移動距離を大きく(60px)変更しました */
+        .hero-text {
+            animation: fadeUp 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(60px); 
+        }
+        /* 遅延のタイミングを少しずらしてじわじわ感を出しています */
+        .hero-text.line-1 { animation-delay: 0.5s; display: inline-block; }
+        .hero-text.line-2 { animation-delay: 1.0s; display: inline-block; }
+        .hero-text.btn { animation-delay: 2.6s; display: inline-block; }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dynamic Asymmetric Grid */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 24px;
+            padding: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .works-grid {
+                grid-template-columns: repeat(12, 1fr);
+                grid-auto-rows: 250px;
+                gap: 32px;
+            }
+            .grid-item-1 { grid-column: span 8; grid-row: span 2; } /* Large */
+            .grid-item-2 { grid-column: span 4; grid-row: span 1; } /* Small */
+            .grid-item-3 { grid-column: span 4; grid-row: span 2; } /* Tall */
+            .grid-item-4 { grid-column: span 8; grid-row: span 1; } /* Wide */
+        }
+
+        /* Asobisystem style vibrant hovers */
+        .work-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #111;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: block; /* aタグをブロック要素にするため追加 */
+        }
+
+        .work-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            filter: grayscale(100%); /* Start minimal */
+        }
+
+        .work-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* The dynamic pop effect on hover */
+        .work-card:hover {
+            transform: scale(0.98) translateY(-5px);
+            border-color: transparent;
+        }
+        
+        /* Vibrant borders/shadows depending on nth-child to simulate Asobi vibe */
+        .work-card:nth-child(1):hover { box-shadow: 0 20px 50px rgba(255, 0, 128, 0.4); }
+        .work-card:nth-child(2):hover { box-shadow: 0 20px 50px rgba(0, 255, 255, 0.4); }
+        .work-card:nth-child(3):hover { box-shadow: 0 20px 50px rgba(255, 255, 0, 0.4); }
+        .work-card:nth-child(4):hover { box-shadow: 0 20px 50px rgba(128, 0, 255, 0.4); }
+
+        .work-card:hover img {
+            transform: scale(1.1);
+            filter: grayscale(0%); /* Pop to color */
+        }
+
+        .work-card:hover .work-overlay {
+            opacity: 1;
+        }
+
+        .work-title {
+            transform: translateY(20px);
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.05em;
+        }
+        
+        .work-card:hover .work-title {
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body class="antialiased selection:bg-white selection:text-black">
+
+    <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold tracking-tighter text-white">PORTFOLIO</a>
+            <div class="hidden md:flex space-x-8 text-sm font-medium tracking-widest text-gray-400">
+                <a href="#profile" class="hover:text-white transition-colors">PROFILE</a>
+                <a href="#works" class="hover:text-white transition-colors">WORKS</a>
+                <a href="#contact" class="hover:text-white transition-colors">CONTACT</a>
+            </div>
+            <!-- Mobile menu button -->
+            <button class="md:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section (Apple Aesthetic) -->
+    <header class="h-screen flex flex-col justify-center items-center text-center px-4 relative overflow-hidden">
+        <!-- アニメーションのクラスを分割して個別に適用 -->
+        <h1 class="text-5xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-24">
+            <span class="hero-text line-1">Hotaka</span> <br class="md:hidden"/> 
+            <span class="hero-text line-2">Komuro</span>
+        </h1>
+        <a href="#profile" class="hero-text btn inline-block px-8 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform duration-300">
+            View more
+        </a>
+        
+        <!-- Subtle background gradient blob for depth -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[120px] -z-10"></div>
+    </header>
+
+    <!-- Profile Section -->
+    <section id="profile" class="py-32 px-4 md:px-12 max-w-4xl mx-auto">
+        <div class="reveal">
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tighter mb-12 border-b border-white/20 pb-4">Profile</h2>
+            <div class="space-y-8">
+                <!-- Name -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 border-b border-white/10 pb-6">
+                    <div class="text-gray-500 font-medium tracking-widest text-sm uppercase flex items-center">Name</div>
+                    <div class="md:col-span-3 text-xl text-gray-100">小室 穂高</div>
+                </div>
+                <!-- Biography -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 border-b border-white/10 pb-6">
+                    <div class="text-gray-500 font-medium tracking-widest text-sm uppercase pt-1">Biography</div>
+                    <div class="md:col-span-3 text-base md:text-lg text-gray-300 leading-relaxed font-light">
+                        2007年愛知県生まれ。2019年に趣味で動画編集を始めたことをきっかけに映像の世界に惹かれ、マイペースに制作を続ける。2022年からは本格的に活動をスタートさせ、動画の撮影や編集業務を受注するようになる。<br><br>
+                        さらに映像表現を深く追求するため、2026年より名古屋学芸大学へ進学し、本格的な映像制作を専攻。また、これに先駆けて2025年からは小説をはじめとする文学分野での創作活動も開始した。映像制作で培ったカメラワークやカット割りといった特有の視点を文章に活かし、読者の脳裏に鮮明な情景が浮かぶような物語づくりに挑戦している。映像と文学という2つのアプローチを掛け合わせることで、枠にとらわれない独自の表現を探求し続けている。
+                    </div>
+                </div>
+                <!-- Tools (新規追加) -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 border-b border-white/10 pb-6">
+                    <div class="text-gray-500 font-medium tracking-widest text-sm uppercase flex items-center">Tools</div>
+                    <div class="md:col-span-3 text-xl text-gray-100">Adobe Premiere Pro （3年）</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Works Section (Asobisystem Aesthetic) -->
+    <section id="works" class="py-32 px-4 md:px-12 max-w-[1600px] mx-auto">
+        <div class="mb-16 reveal">
+            <h2 class="text-4xl md:text-6xl font-bold tracking-tighter mb-4">Selected Works</h2>
+            <p class="text-gray-500 font-light text-lg">Fragments of a continuous exploration through light,motion,and form</p>
+        </div>
+
+        <div class="works-grid">
+            <!-- Item 1 (Large) -->
+            <a href="showreel.html" class="work-card grid-item-1 reveal">
+                <img src="nagano.webp" alt="Project 1">
+                <div class="work-overlay">
+                    <h3 class="work-title text-pink-400">Showreel</h3>
+                    <p class="text-gray-300 mt-2 text-sm">Video Director</p>
+                </div>
+            </a>
+
+            <!-- Item 2 (Small) -->
+            <a href="books.html" class="work-card grid-item-2 reveal">
+                <img src="book.webp" alt="Project 2">
+                <div class="work-overlay">
+                    <h3 class="work-title text-cyan-400">Books</h3>
+                    <p class="text-gray-300 mt-2 text-sm">Self-Published Author</p>
+                </div>
+            </a>
+
+            <!-- Item 3 (Tall) -->
+            <a href="https://www.instagram.com/komuro_hotaka?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" class="work-card grid-item-3 reveal">
+                <img src="kabuki.webp" alt="Project 3">
+                <div class="work-overlay">
+                    <h3 class="work-title text-yellow-400">Photography</h3>
+                    <p class="text-gray-300 mt-2 text-sm">Instagram</p>
+                </div>
+            </a>
+
+            <!-- Item 4 (Wide) -->
+            <a href="video.html" class="work-card grid-item-4 reveal">
+                <img src="sea.webp" alt="Project 4">
+                <div class="work-overlay">
+                    <h3 class="work-title text-purple-400">Video</h3>
+                    <p class="text-gray-300 mt-2 text-sm">Director/Video Editor</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 px-6 bg-zinc-950">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tighter mb-8">Crafting digital experiences with precision and playfulness.</h2>
+            <a href="mailto:26mv047@st.nuas.ac.jp" class="inline-block border border-white px-8 py-4 rounded-full hover:bg-white hover:text-black transition-colors duration-300">
+                Get in touch
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/10 text-center">
+        <p class="text-gray-600 text-sm tracking-widest">&copy; 2026 Hotaka Komuro. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Scroll Reveal Animation using Intersection Observer
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealObserver = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            // Navbar background opacity on scroll
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('bg-black/80', 'shadow-lg');
+                    navbar.classList.remove('bg-black/60');
+                } else {
+                    navbar.classList.add('bg-black/60');
+                    navbar.classList.remove('bg-black/80', 'shadow-lg');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
