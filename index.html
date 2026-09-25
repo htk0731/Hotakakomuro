@@ -349,7 +349,24 @@ body.crt-off #crt-overlay::after {
                     navbar.classList.remove('bg-black/80', 'shadow-lg');
                 }
             });
+            
+            // Mobile menu toggle
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
 
+            if(mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+                // リンクをクリックしたらメニューを閉じる
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+            }
+            
             // CRT ページ遷移アニメーションの処理
             const links = document.querySelectorAll('a[href]');
             links.forEach(link => {
