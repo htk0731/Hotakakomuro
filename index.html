@@ -7,7 +7,28 @@
     <!-- Tailwind CSS for layout -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;800&display=swap');
+        /* ダウンロードしたInterフォントの読み込み */
+        @font-face {
+            font-display: swap; 
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 300;
+            src: url('./fonts/inter-v13-latin-300.woff2') format('woff2');
+        }
+        @font-face {
+            font-display: swap; 
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            src: url('./fonts/inter-v13-latin-500.woff2') format('woff2');
+        }
+        @font-face {
+            font-display: swap; 
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 800;
+            src: url('./fonts/inter-v13-latin-800.woff2') format('woff2');
+        }
 
         body {
             font-family: 'Inter', sans-serif;
