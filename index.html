@@ -29,9 +29,9 @@
         }
 
         .cube-loader-preview {
-            width: 100px; height: 100px; /* サイズを拡大 */
+            width: 100px; height: 100px;
             position: relative;
-            perspective: 400px; /* サイズに合わせてパースを調整 */
+            perspective: 400px;
         }
         .cube-loader-preview .cube {
             width: 100%; height: 100%;
@@ -41,13 +41,12 @@
         }
         .cube-loader-preview .cube-face {
             position: absolute;
-            width: 100px; height: 100px; /* 面のサイズも拡大 */
+            width: 100px; height: 100px;
             background-color: #ffffff;
             opacity: 0.8;
-            border: 2px solid #000000; /* 枠線を黒に変更し、少し太く */
+            border: 2px solid #000000;
             box-sizing: border-box;
         }
-        /* サイズ拡大に合わせて配置(translateZ)を調整(サイズの半分) */
         .cube-loader-preview .front  { transform: translateZ(50px); }
         .cube-loader-preview .back   { transform: rotateY(180deg) translateZ(50px); }
         .cube-loader-preview .right  { transform: rotateY(90deg) translateZ(50px); }
@@ -83,15 +82,22 @@
             transform: translateY(0);
         }
 
-        /* Hero text fade in */
+        /* Hero text fade in (ローディング完了後にアニメーション開始) */
         .hero-text {
-            animation: fadeUp 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(60px); 
         }
-        .hero-text.line-1 { animation-delay: 0.5s; display: inline-block; }
-        .hero-text.line-2 { animation-delay: 1.0s; display: inline-block; }
-        .hero-text.btn { animation-delay: 2.6s; display: inline-block; }
+        .hero-text.line-1 { display: inline-block; }
+        .hero-text.line-2 { display: inline-block; }
+        .hero-text.btn { display: inline-block; }
+
+        /* bodyに loaded クラスが付与されたらアニメーションを実行 */
+        body.loaded .hero-text {
+            animation: fadeUp 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        body.loaded .hero-text.line-1 { animation-delay: 0.2s; }
+        body.loaded .hero-text.line-2 { animation-delay: 0.7s; }
+        body.loaded .hero-text.btn { animation-delay: 2.0s; }
 
         @keyframes fadeUp {
             to {
@@ -396,17 +402,15 @@
                 }
             });
 
-            // ===== Mobile menu toggle (3Dアニメーション用に変更) =====
+            // ===== Mobile menu toggle =====
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileLinks = document.querySelectorAll('.mobile-link');
 
             if(mobileBtn && mobileMenu) {
                 mobileBtn.addEventListener('click', () => {
-                    // hiddenの切り替えではなく、is-activeクラスをトグル
                     mobileMenu.classList.toggle('is-active');
                 });
-                // リンクをクリックしたらメニューを閉じる
                 mobileLinks.forEach(link => {
                     link.addEventListener('click', () => {
                         mobileMenu.classList.remove('is-active');
@@ -415,18 +419,21 @@
             }
         });
 
-        // ----- ローディング画面のフェードアウト処理 -----
+        // ----- ローディング画面のフェードアウト処理 & タイトルアニメーション開始 -----
         window.addEventListener('load', () => {
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
-                // 最低0.5秒間はアニメーションを見せるためのタイムアウト
+                // 読み込み完了後、最低1秒間（1000ms）はアニメーションを表示する
                 setTimeout(() => {
                     loadingScreen.style.opacity = '0';
-                    // CSSのtransition時間(0.8s)後に要素を非表示にして背後を触れるようにする
+                    // CSSのtransition時間(0.8s)後に要素を非表示にし、タイトルアニメーションを開始
                     setTimeout(() => {
                         loadingScreen.style.display = 'none';
+                        document.body.classList.add('loaded'); // ここでタイトルがフワッと出ます
                     }, 1000); 
-                }, 2000);
+                }, 2000); 
+            } else {
+                document.body.classList.add('loaded'); // ローディング画面が無い場合のフォールバック
             }
         });
     </script>
