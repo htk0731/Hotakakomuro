@@ -16,38 +16,48 @@
             overflow-x: hidden;
         }
 
-        /* ブラウン管（CRT）トランジション用のオーバーレイ */
-        #crt-overlay {
+        /* ----- Loading Animation ----- */
+        #loading-screen {
             position: fixed;
             inset: 0;
             background-color: #000;
-            z-index: 9999;
-            pointer-events: none;
-            opacity: 0;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-in-out;
         }
-        #crt-overlay::after {
-            content: "";
+
+        .cube-loader-preview {
+            width: 100px; height: 100px; /* サイズを拡大 */
+            position: relative;
+            perspective: 400px; /* サイズに合わせてパースを調整 */
+        }
+        .cube-loader-preview .cube {
+            width: 100%; height: 100%;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            opacity: 0;
+            transform-style: preserve-3d;
+            animation: cube-rotate-animation 4s infinite linear;
         }
-        /* ----- 電源OFF (ページ遷移時) ----- */
-        body.crt-off #crt-overlay {
-            opacity: 1;
-            pointer-events: auto;
+        .cube-loader-preview .cube-face {
+            position: absolute;
+            width: 100px; height: 100px; /* 面のサイズも拡大 */
+            background-color: #ffffff;
+            opacity: 0.8;
+            border: 2px solid #000000; /* 枠線を黒に変更し、少し太く */
+            box-sizing: border-box;
         }
-        body.crt-off #crt-overlay::after {
-            opacity: 1;
-            animation: crtLineOff 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-        }
-        @keyframes crtLineOff {
-            0% { width: 100vw; height: 100vh; opacity: 0.8; }
-            40% { width: 100vw; height: 2px; opacity: 1; }
-            80% { width: 0vw; height: 2px; opacity: 1; }
-            100% { width: 0vw; height: 0; opacity: 0; }
+        /* サイズ拡大に合わせて配置(translateZ)を調整(サイズの半分) */
+        .cube-loader-preview .front  { transform: translateZ(50px); }
+        .cube-loader-preview .back   { transform: rotateY(180deg) translateZ(50px); }
+        .cube-loader-preview .right  { transform: rotateY(90deg) translateZ(50px); }
+        .cube-loader-preview .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .cube-loader-preview .top    { transform: rotateX(90deg) translateZ(50px); }
+        .cube-loader-preview .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+        @keyframes cube-rotate-animation {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
         }
 
         /* Apple-like minimalist scrollbar */
@@ -215,8 +225,19 @@
 </head>
 <body class="antialiased selection:bg-white selection:text-black">
 
-    <!-- CRT Transition Element -->
-    <div id="crt-overlay"></div>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="cube-loader-preview">
+            <div class="cube">
+                <div class="cube-face front"></div>
+                <div class="cube-face back"></div>
+                <div class="cube-face right"></div>
+                <div class="cube-face left"></div>
+                <div class="cube-face top"></div>
+                <div class="cube-face bottom"></div>
+            </div>
+        </div>
+    </div>
 
     <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -392,25 +413,20 @@
                     });
                 });
             }
-            
-            // CRT ページ遷移アニメーションの処理
-            const links = document.querySelectorAll('a[href]');
-            links.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const href = link.getAttribute('href');
-                    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('javascript:') || link.target === '_blank') return;
-                    
-                    e.preventDefault();
-                    document.body.classList.add('crt-off');
-                    setTimeout(() => { window.location.href = href; }, 1500);
-                });
-            });
         });
 
-        // ページの「戻る/進む」ボタンで戻った際に対応
-        window.addEventListener('pageshow', (event) => {
-            if (event.persisted) {
-                document.body.classList.remove('crt-off');
+        // ----- ローディング画面のフェードアウト処理 -----
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                // 最低0.5秒間はアニメーションを見せるためのタイムアウト
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    // CSSのtransition時間(0.8s)後に要素を非表示にして背後を触れるようにする
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 800); 
+                }, 500);
             }
         });
     </script>
