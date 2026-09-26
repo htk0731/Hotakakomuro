@@ -423,15 +423,24 @@
         window.addEventListener('load', () => {
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
-                // 読み込み完了後、最低1秒間（1000ms）はアニメーションを表示する
+                
+                // sessionStorageを使って、初回アクセスか再訪（戻ってきた時など）かを判定
+                let waitTime = 2000; // 初回は2秒
+                if (sessionStorage.getItem('hasVisitedPortfolio')) {
+                    waitTime = 700; // 2回目以降（戻ってきた時含む）は1秒
+                } else {
+                    sessionStorage.setItem('hasVisitedPortfolio', 'true');
+                }
+
+                // 設定した時間待ってからローディング画面を消す
                 setTimeout(() => {
                     loadingScreen.style.opacity = '0';
                     // CSSのtransition時間(0.8s)後に要素を非表示にし、タイトルアニメーションを開始
                     setTimeout(() => {
                         loadingScreen.style.display = 'none';
                         document.body.classList.add('loaded'); // ここでタイトルがフワッと出ます
-                    }, 1000); 
-                }, 2000); 
+                    }, 800); 
+                }, waitTime); 
             } else {
                 document.body.classList.add('loaded'); // ローディング画面が無い場合のフォールバック
             }
