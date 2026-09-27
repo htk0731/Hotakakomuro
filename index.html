@@ -282,6 +282,20 @@
             visibility: visible;
             pointer-events: auto; /* メニュー表示時はタップ可能に */
         }
+
+        /* ----- 隠しコマンド用スタイル ----- */
+        /* マウスカーソルを全体で非表示に */
+        body.secret-mode, body.secret-mode * {
+            cursor: none !important;
+        }
+        /* RECの点滅アニメーション */
+        @keyframes recBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .animate-rec {
+            animation: recBlink 1s infinite;
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-white selection:text-black">
@@ -300,7 +314,51 @@
         </div>
     </div>
 
-    <!-- CRT Transition Element (追加) -->
+    <!-- ===== カメラシャッターエフェクト用要素 ===== -->
+    <!-- フラッシュ発光 -->
+    <div id="camera-flash" class="fixed inset-0 bg-white opacity-0 z-[100000] pointer-events-none transition-opacity duration-75"></div>
+    <!-- シャッター上部 -->
+    <div id="shutter-top" class="fixed top-0 left-0 w-full h-0 bg-black z-[99999] pointer-events-none transition-all duration-150 ease-in-out"></div>
+    <!-- シャッター下部 -->
+    <div id="shutter-bottom" class="fixed bottom-0 left-0 w-full h-0 bg-black z-[99999] pointer-events-none transition-all duration-150 ease-in-out"></div>
+
+    <!-- 画面色反転フィルター (固定配置を崩さない安全な方法) -->
+    <!-- 背景を白にして difference で合成することでページ全体の色を反転させます -->
+    <div id="invert-overlay" class="fixed inset-0 bg-white pointer-events-none hidden z-[9998]" style="mix-blend-mode: difference;"></div>
+
+    <!-- 隠しコマンド用 UI (初期状態は非表示) -->
+    <!-- invert-overlay のさらに上に配置(z-9999)し、UI自体の色は反転させずにそのまま表示 -->
+    <div id="secret-ui" class="hidden pointer-events-none">
+        
+        <!-- REC UI: 赤色 (位置をメニューバーの下 top-24 に調整) -->
+        <div class="fixed top-24 left-6 flex items-center space-x-3 text-red-600 font-bold text-xl md:text-2xl tracking-widest z-[9999]">
+            <div class="w-4 h-4 md:w-5 md:h-5 bg-red-600 rounded-full animate-rec"></div>
+            <span>REC</span>
+        </div>
+        
+        <!-- バッテリー UI: 黒色 (位置をメニューバーの下 top-24 に調整) -->
+        <div class="fixed top-24 right-6 flex items-center text-black z-[9999]">
+            <div class="w-10 h-5 md:w-12 md:h-6 border-2 border-black rounded-[2px] p-[2px] flex">
+                <!-- バッテリー残量 -->
+                <div class="w-3/4 bg-black rounded-[1px]"></div>
+            </div>
+            <div class="w-1 md:w-1.5 h-2 md:h-3 bg-black rounded-r-[2px] ml-[2px]"></div>
+        </div>
+
+        <!-- カスタムカーソル: 黒色 -->
+        <div id="custom-cursor" class="fixed w-12 h-12 pointer-events-none transform -translate-x-1/2 -translate-y-1/2 hidden z-[10000]">
+            <!-- 四隅の枠 -->
+            <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-black"></div>
+            <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-black"></div>
+            <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-black"></div>
+            <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-black"></div>
+            <!-- 中央のクロス [+] -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-[2px] bg-black"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2px] h-4 bg-black"></div>
+        </div>
+    </div>
+
+    <!-- CRT Transition Element -->
     <div id="crt-overlay"></div>
 
     <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 transition-all duration-300" id="navbar">
@@ -317,7 +375,7 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu 3D Wrapper (ナビゲーションの外に配置) -->
+    <!-- Mobile Menu 3D Wrapper -->
     <div id="mobile-menu-wrapper" class="md:hidden">
         <div id="mobile-menu" class="bg-black/95 backdrop-blur-xl border-l border-white/10 flex flex-col space-y-8 text-lg font-medium tracking-widest text-gray-400">
             <a href="#profile" class="mobile-link hover:text-white transition-colors">PROFILE</a>
@@ -413,11 +471,16 @@
 
     <!-- Contact Section -->
     <section id="contact" class="py-32 px-6 bg-zinc-950">
-        <div class="max-w-4xl mx-auto text-center reveal">
+        <div class="max-w-4xl mx-auto text-center reveal flex flex-col items-center">
             <h2 class="text-3xl md:text-5xl font-bold tracking-tighter mb-8">Crafting digital experiences with precision and playfulness.</h2>
             <a href="mailto:26mv047@st.nuas.ac.jp" class="inline-block border border-white px-8 py-4 rounded-full hover:bg-white hover:text-black transition-colors duration-300">
                 Get in touch
             </a>
+            
+            <!-- 隠しコマンド用トリガーボタン -->
+            <button id="secret-btn" class="block mt-8 text-xs text-zinc-700 hover:text-zinc-400 transition-colors bg-transparent border-none cursor-pointer focus:outline-none">
+                Don't touch.
+            </button>
         </div>
     </section>
 
@@ -476,7 +539,7 @@
                 });
             }
 
-            // ===== CRT ページ遷移アニメーションの処理 (追加) =====
+            // ===== CRT ページ遷移アニメーションの処理 =====
             const links = document.querySelectorAll('a[href]');
             links.forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -485,13 +548,74 @@
                     
                     e.preventDefault();
                     document.body.classList.add('crt-off');
-                    // アニメーション時間(1.5s)に合わせて遷移させる
                     setTimeout(() => { window.location.href = href; }, 1500);
                 });
             });
+
+            // ===== 隠しコマンド発動処理（シャッターエフェクト付き） =====
+            const secretBtn = document.getElementById('secret-btn');
+            if (secretBtn) {
+                secretBtn.addEventListener('click', (e) => {
+                    // 既に発動済みの場合は何もしない
+                    if (document.body.classList.contains('secret-mode')) return;
+
+                    const flash = document.getElementById('camera-flash');
+                    const shutterTop = document.getElementById('shutter-top');
+                    const shutterBottom = document.getElementById('shutter-bottom');
+                    const secretUI = document.getElementById('secret-ui');
+                    const customCursor = document.getElementById('custom-cursor');
+
+                    // 1. 一瞬だけフラッシュ（白画面）を発光させる
+                    flash.classList.remove('opacity-0');
+                    flash.classList.add('opacity-100');
+
+                    setTimeout(() => {
+                        // 2. フラッシュを消しつつ、上下からシャッター（黒画面）を閉じる
+                        flash.classList.remove('opacity-100');
+                        flash.classList.add('opacity-0');
+                        shutterTop.style.height = '50vh';
+                        shutterBottom.style.height = '50vh';
+
+                        setTimeout(() => {
+                            // 3. シャッターが完全に閉まりきった裏側でモードを切り替える
+                            document.body.classList.add('secret-mode');
+                            document.getElementById('invert-overlay').classList.remove('hidden');
+                            if (secretUI) secretUI.classList.remove('hidden');
+                            if (customCursor) {
+                                customCursor.classList.remove('hidden');
+                                // クリックした位置にカスタムカーソルを初期配置する
+                                customCursor.style.left = e.clientX + 'px';
+                                customCursor.style.top = e.clientY + 'px';
+                            }
+
+                            // カーソル追従処理の登録
+                            document.addEventListener('mousemove', (moveEvent) => {
+                                if (customCursor && !customCursor.classList.contains('hidden')) {
+                                    customCursor.style.left = moveEvent.clientX + 'px';
+                                    customCursor.style.top = moveEvent.clientY + 'px';
+                                }
+                            });
+                            document.addEventListener('touchmove', (touchEvent) => {
+                                if (customCursor && !customCursor.classList.contains('hidden') && touchEvent.touches.length > 0) {
+                                    customCursor.style.left = touchEvent.touches[0].clientX + 'px';
+                                    customCursor.style.top = touchEvent.touches[0].clientY + 'px';
+                                }
+                            });
+
+                            // 4. シャッターを開いて、反転した世界を見せる
+                            setTimeout(() => {
+                                shutterTop.style.height = '0';
+                                shutterBottom.style.height = '0';
+                            }, 100); 
+
+                        }, 150); // シャッターが閉まるまで待機する時間(ms)
+
+                    }, 50); // フラッシュが光っている時間(ms)
+                });
+            }
         });
 
-        // ページの「戻る/進む」ボタンで戻った際にCRTクラスを解除する (追加)
+        // ページの「戻る/進む」ボタンで戻った際にCRTクラスを解除する
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
                 document.body.classList.remove('crt-off');
@@ -502,26 +626,22 @@
         window.addEventListener('load', () => {
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
-                
-                // sessionStorageを使って、初回アクセスか再訪（戻ってきた時など）かを判定
-                let waitTime = 2000; // 初回は2秒
+                let waitTime = 2000;
                 if (sessionStorage.getItem('hasVisitedPortfolio')) {
-                    waitTime = 700; // 2回目以降（戻ってきた時含む）は1秒弱
+                    waitTime = 700;
                 } else {
                     sessionStorage.setItem('hasVisitedPortfolio', 'true');
                 }
 
-                // 設定した時間待ってからローディング画面を消す
                 setTimeout(() => {
                     loadingScreen.style.opacity = '0';
-                    // CSSのtransition時間(0.8s)後に要素を非表示にし、タイトルアニメーションを開始
                     setTimeout(() => {
                         loadingScreen.style.display = 'none';
-                        document.body.classList.add('loaded'); // ここでタイトルがフワッと出ます
+                        document.body.classList.add('loaded');
                     }, 800); 
                 }, waitTime); 
             } else {
-                document.body.classList.add('loaded'); // ローディング画面が無い場合のフォールバック
+                document.body.classList.add('loaded');
             }
         });
     </script>
